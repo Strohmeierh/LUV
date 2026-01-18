@@ -1,0 +1,447 @@
+import React, { useState } from 'react';
+import { 
+  Shield, 
+  ShieldAlert, 
+  Plane, 
+  FileText, 
+  AlertTriangle, 
+  Info, 
+  CheckCircle, 
+  XCircle, 
+  Menu, 
+  X, 
+  ChevronDown, 
+  Download, 
+  FilePlus 
+} from 'lucide-react';
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const renderContent = () => {
+    switch(activeTab) {
+      case 'conditions': return <Conditions />;
+      case 'pilots': return <PilotRequirements />;
+      case 'claims': return <Claims />;
+      case 'new-entry': return <NewEntry />;
+      default: return <Home setActiveTab={setActiveTab} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-slate-50 text-slate-900">
+      {/* Navigation */}
+      <nav className="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center cursor-pointer" onClick={() => setActiveTab('home')}>
+              <Shield className="text-sky-400 mr-2 h-8 w-8" />
+              <span className="font-bold text-xl tracking-tight">LUV Portal</span>
+            </div>
+            
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
+              <NavButton id="home" label="Übersicht" activeTab={activeTab} setActiveTab={setActiveTab} icon={<Info className="h-4 w-4" />} />
+              <NavButton id="conditions" label="Versicherungsbedingungen" activeTab={activeTab} setActiveTab={setActiveTab} icon={<ShieldAlert className="h-4 w-4" />} />
+              <NavButton id="pilots" label="Piloten & Betrieb" activeTab={activeTab} setActiveTab={setActiveTab} icon={<Plane className="h-4 w-4" />} />
+              <NavButton id="new-entry" label="Neuabschluss" activeTab={activeTab} setActiveTab={setActiveTab} icon={<FilePlus className="h-4 w-4" />} />
+              <NavButton id="claims" label="Schadenmeldung" activeTab={activeTab} setActiveTab={setActiveTab} icon={<AlertTriangle className="h-4 w-4" />} />
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-300 hover:text-white focus:outline-none">
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-slate-800 pb-4">
+            <MobileNavButton id="home" label="Übersicht" activeTab={activeTab} setActiveTab={setActiveTab} setOpen={setMobileMenuOpen} />
+            <MobileNavButton id="conditions" label="Bedingungen" activeTab={activeTab} setActiveTab={setActiveTab} setOpen={setMobileMenuOpen} />
+            <MobileNavButton id="pilots" label="Piloten & Betrieb" activeTab={activeTab} setActiveTab={setActiveTab} setOpen={setMobileMenuOpen} />
+            <MobileNavButton id="new-entry" label="Neuabschluss / Verlängerung" activeTab={activeTab} setActiveTab={setActiveTab} setOpen={setMobileMenuOpen} />
+            <MobileNavButton id="claims" label="Schadenmeldung" activeTab={activeTab} setActiveTab={setActiveTab} setOpen={setMobileMenuOpen} />
+          </div>
+        )}
+      </nav>
+
+      {/* Content Area */}
+      <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        {renderContent()}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-100 border-t border-slate-200 mt-auto">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-slate-500 text-sm">
+          <p>© 2026 Luftsport-Unterstützungs-Verein (LUV). Alle Angaben basieren auf den LUV-Bedingungen (Stand Jan 2015).</p>
+          <p className="mt-2">Adresse: Johannes Kammerer, Müllerstrasse 43, CH 8004 Zürich</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// Components
+const NavButton = ({ id, label, activeTab, setActiveTab, icon }) => (
+  <button 
+    onClick={() => setActiveTab(id)}
+    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === id ? 'bg-slate-800 text-sky-400' : 'text-gray-300 hover:bg-slate-700 hover:text-white'}`}
+  >
+    {icon}
+    <span>{label}</span>
+  </button>
+);
+
+const MobileNavButton = ({ id, label, activeTab, setActiveTab, setOpen }) => (
+  <button 
+    onClick={() => { setActiveTab(id); setOpen(false); }}
+    className={`block w-full text-left px-4 py-3 text-base font-medium ${activeTab === id ? 'bg-slate-900 text-sky-400' : 'text-gray-300 hover:bg-slate-700 hover:text-white'}`}
+  >
+    {label}
+  </button>
+);
+
+const Home = ({ setActiveTab }) => (
+  <div className="space-y-8">
+    <div className="bg-gradient-to-r from-sky-600 to-indigo-700 rounded-2xl shadow-xl p-8 sm:p-12 text-white">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-4">Willkommen beim LUV Informationsportal</h1>
+      <p className="text-lg sm:text-xl text-sky-100 max-w-3xl">
+        Ihr zentraler Anlaufpunkt für alle Informationen rund um die Versicherung Ihres Flugzeuges. 
+        Hier finden Sie strukturiert alle Regeln, Bedingungen und Abläufe für Piloten und Halter.
+      </p>
+      <div className="mt-8 flex flex-wrap gap-4">
+        <button onClick={() => setActiveTab('conditions')} className="bg-white text-indigo-700 font-semibold py-2 px-6 rounded-lg shadow hover:bg-indigo-50 transition">
+          Was ist versichert?
+        </button>
+        <button onClick={() => setActiveTab('claims')} className="bg-sky-500 bg-opacity-20 border border-sky-300 text-white font-semibold py-2 px-6 rounded-lg hover:bg-opacity-30 transition">
+          Schaden melden
+        </button>
+      </div>
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <DashboardCard 
+        title="Versicherungs-Check" 
+        icon={<ShieldAlert className="text-indigo-600 h-6 w-6" />}
+        text="Prüfen Sie Deckungsumfang, Selbstbehalte und Ausschlüsse."
+        action={() => setActiveTab('conditions')}
+      />
+      <DashboardCard 
+        title="Für Piloten" 
+        icon={<Plane className="text-indigo-600 h-6 w-6" />}
+        text="Wichtige Infos zu Flugerfahrung, Einweisungen und Wettbewerben."
+        action={() => setActiveTab('pilots')}
+      />
+      <DashboardCard 
+        title="Neuabschluss" 
+        icon={<FilePlus className="text-indigo-600 h-6 w-6" />}
+        text="Infos zur Anmeldung, Verlängerung und Wertangaben für Flugzeuge."
+        action={() => setActiveTab('new-entry')}
+      />
+      <DashboardCard 
+        title="Im Schadenfall" 
+        icon={<AlertTriangle className="text-indigo-600 h-6 w-6" />}
+        text="Schnellanleitung: Was ist sofort zu tun? Dokumente und Meldewege."
+        action={() => setActiveTab('claims')}
+      />
+    </div>
+  </div>
+);
+
+const DashboardCard = ({ title, icon, text, action }) => (
+  <div onClick={action} className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+        <div className="p-2 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition">{icon}</div>
+      </div>
+      <p className="text-slate-600 mb-4 text-sm">{text}</p>
+    </div>
+    <span className="text-indigo-600 font-medium text-sm flex items-center group-hover:underline mt-2">
+      Mehr erfahren <ChevronDown className="ml-1 h-4 w-4 rotate-[-90deg]" />
+    </span>
+  </div>
+);
+
+const Conditions = () => (
+  <div className="space-y-6">
+    <div className="border-b pb-4 mb-6">
+      <h2 className="text-2xl font-bold text-slate-800">Allgemeine Bedingungen</h2>
+      <p className="text-slate-500">Zusammenfassung aus den Allgemeinen Bedingungen (Stand Jan 2015)</p>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-8">
+      {/* Versichert */}
+      <div className="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden">
+        <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex items-center">
+          <CheckCircle className="text-green-600 mr-2 h-5 w-5" />
+          <h3 className="font-bold text-green-800">Versicherte Ereignisse</h3>
+        </div>
+        <div className="p-6 space-y-4">
+          <ConditionItem title="1.1 Unfall" text="Plötzlich und gewaltsam von außen einwirkendes Ereignis (inkl. Überlastung der Zelle im Flug) oder >30 Tage Verschollenheit." />
+          <ConditionItem title="1.2 Feuer" text="Brand, Explosion, Blitzschlag." />
+          <ConditionItem title="1.3 Elementar" text="Erdrutsch, Steinschlag, Hochwasser, Sturmwind (>40kt), Hagel, Lawine, Schneedruck." />
+          <ConditionItem title="1.4 Diebstahl" text="Raub, Entwendung oder Versuch dazu (Achtung: Veruntreuung ist nicht versichert)." />
+          <ConditionItem title="1.5 Glasbruch" text="Bruch der Scheibe(n)/Haube(n)." />
+          <ConditionItem title="1.6 Tierschäden" text="Schäden verursacht durch äußere Einwirkung von Tieren." />
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <span className="text-sm font-semibold text-slate-700">Geltungsbereich:</span>
+            <span className="text-sm text-slate-600 ml-2">Weltweit</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Nicht Versichert */}
+      <div className="bg-white rounded-xl shadow-sm border border-red-100 overflow-hidden">
+        <div className="bg-red-50 px-6 py-4 border-b border-red-100 flex items-center">
+          <XCircle className="text-red-600 mr-2 h-5 w-5" />
+          <h3 className="font-bold text-red-800">Nicht versichert</h3>
+        </div>
+        <div className="p-6 space-y-4">
+          <ul className="list-disc list-outside ml-4 space-y-2 text-slate-700 text-sm">
+            <li>Schäden, wenn das Flugzeug vorsätzlich ohne die vorgeschriebenen Ausweise, Bewilligungen und Berechtigungen verwendet wird. (Versicherungspflicht bleibt bestehen, wenn dies ohne Wissen/Verschulden des Halters geschieht).</li>
+            <li>Kriegsereignisse, innere Unruhen, Streik, Verfügung von hoher Hand oder Beschlagnahmung.</li>
+            <li>Schäden durch natürliche Abnützung, durch Material-, Konstruktions- oder Fabrikationsfehler (der Folgeschaden an der versicherten Sache ist jedoch gedeckt).</li>
+            <li>Schäden, die unmittelbar oder mittelbar durch atomare Energie verursacht sind.</li>
+            <li>Vorsätzliche Herbeiführung des Schadens durch das Mitglied. (Bei grober Fahrlässigkeit ist der LUV berechtigt, seine Leistung in einem dem Verschulden entsprechenden Verhältnis zu kürzen).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    {/* Finanzen Accordion */}
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 mt-8">
+      <div className="p-6">
+        <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+          <FileText className="mr-2 h-5 w-5 text-sky-600" />
+          Finanzielles & Beiträge
+        </h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-slate-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-slate-800 mb-2">Beitragszahlung</h4>
+            <p className="text-sm text-slate-600">
+              Der Beitrag ist innert 30 Tagen nach Rechnungserhalt zu zahlen. 
+              Bei Nichtbezahlung ruht die Leistungspflicht nach Ablauf von 14 Tagen nach der eingeschriebenen Mahnung.
+            </p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-slate-800 mb-2">Treuerabatt</h4>
+            <p className="text-sm text-slate-600">
+              In den ersten 3 Versicherungsjahren ist der volle Beitrag zu zahlen. 
+              Nach Ablauf von 3 Jahren kann ein Treuerabatt gemäß den zusätzlichen Bedingungen gewährt werden.
+            </p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-lg md:col-span-2">
+            <h4 className="font-semibold text-slate-800 mb-2">Rückgriff & Andere Entschädigungen</h4>
+            <p className="text-sm text-slate-600">
+              Das Mitglied muss andere Entschädigungsmöglichkeiten (Haftpflicht Dritter, andere Versicherer) ausschöpfen. 
+              Erhaltene Entschädigungen sind an den LUV abzutreten bzw. werden verrechnet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const ConditionItem = ({ title, text }) => (
+  <div>
+    <h4 className="text-sm font-bold text-slate-800">{title}</h4>
+    <p className="text-sm text-slate-600">{text}</p>
+  </div>
+);
+
+const PilotRequirements = () => (
+  <div className="space-y-8">
+    <div className="bg-amber-50 border-l-4 border-amber-500 p-4">
+      <div className="flex">
+        <div className="flex-shrink-0">
+          <AlertTriangle className="h-5 w-5 text-amber-500" />
+        </div>
+        <div className="ml-3">
+          <p className="text-sm text-amber-700">
+            <strong>Wichtig:</strong> Unzureichende Flugerfahrung ist eine Hauptursache für Schäden. Die Einhaltung dieser Regeln hat Priorität für den Versicherungsschutz.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div className="grid gap-6">
+      {/* Flugerfahrung */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">1. Ausreichende Flugerfahrung</h3>
+        <div className="space-y-4">
+          <p className="text-slate-700">Grundsatz: Nach einem mehr als <strong>dreimonatigen Unterbruch</strong> muss jeder Pilot einen Überprüfungsstart mit Fluglehrer absolvieren.</p>
+          
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+            <h4 className="font-semibold text-slate-800 mb-2">Ausnahme für "Erfahrene Piloten"</h4>
+            <p className="text-sm text-slate-600 mb-2">Nicht unter die 3-Monats-Regel fallen Piloten, die folgende Bedingungen erfüllen:</p>
+            <ul className="list-disc list-inside text-sm text-slate-700 space-y-1">
+              <li>Mehr als 500 Stunden Segelflugerfahrung <strong>INSGESAMT</strong></li>
+              <li><span className="font-semibold text-indigo-600">ODER</span> innerhalb der letzten 4 Jahre 200 Segelflugstunden</li>
+            </ul>
+            <p className="text-xs text-red-600 mt-2 font-semibold">
+              ACHTUNG: Diese Ausnahme gilt NICHT, wenn in den letzten zwei Jahren weniger als 20 Stunden geflogen wurden!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Einweisungen */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">2. Einweisungen & Flugzeugtypen</h3>
+        
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-slate-800 mb-2">Wer darf einweisen?</h4>
+            <ul className="space-y-2 text-sm text-slate-600">
+              <li className="flex items-start"><CheckCircle className="mr-2 mt-0.5 text-green-500 h-4 w-4" /> <span><strong>Flugschüler:</strong> Nur von Fluglehrern.</span></li>
+              <li className="flex items-start"><CheckCircle className="mr-2 mt-0.5 text-green-500 h-4 w-4" /> <span><strong>Scheininhaber:</strong> Von Fluglehrer oder vom Halter bestimmtem erfahrenen Einweiser.</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-slate-800 mb-2">Voraussetzungen</h4>
+            <ul className="space-y-2 text-sm text-slate-600">
+              <li className="flex items-start"><FileText className="mr-2 mt-0.5 text-sky-500 h-4 w-4" /> <span>Flughandbuch gelesen</span></li>
+              <li className="flex items-start"><FileText className="mr-2 mt-0.5 text-sky-500 h-4 w-4" /> <span>Wichtige Geschwindigkeiten bekannt</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h4 className="font-semibold text-slate-800 mb-2">Anrechnung von Erfahrung</h4>
+          <p className="text-sm text-slate-600 mb-2">Aktuelle Flugerfahrung auf einem Segelflugzeug einer "höheren Klasse" wird angerechnet. Klassen:</p>
+          <div className="flex flex-wrap gap-2">
+            <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">Holz-/Stahlrohr</span>
+            <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">Kunststoff (starr)</span>
+            <span className="px-3 py-1 bg-indigo-100 rounded-full text-xs font-medium text-indigo-600">Wölbklappenflugzeuge</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Überlandflüge & Wettbewerbe */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">3. Überlandflüge & Wettbewerbe</h3>
+        
+        <div className="space-y-4">
+          <div className="flex items-start">
+            <div className="min-w-[4px] h-full bg-sky-500 mr-4 rounded"></div>
+            <div>
+              <h4 className="font-bold text-slate-800">Motorsegler / Turbos / Eigenstarter</h4>
+              <p className="text-sm text-slate-600 mt-1">
+                Für Überlandflüge sind <strong>3 Inbetriebnahmen des Triebwerkes in der Luft</strong> innerhalb der letzten 6 Monate erforderlich.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start">
+            <div className="min-w-[4px] h-full bg-indigo-500 mr-4 rounded"></div>
+            <div>
+              <h4 className="font-bold text-slate-800">Wettbewerbe</h4>
+              <p className="text-sm text-slate-600 mt-1">
+                Voller Versicherungsschutz besteht nur, wenn der Wettbewerb von der FAI oder dem nationalen Aeroclub genehmigt/ausgeschrieben ist.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const Claims = () => (
+  <div className="space-y-6">
+    <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+      <h2 className="text-2xl font-bold text-red-700 mb-2">Unfall passiert?</h2>
+      <p className="text-red-600">Bewahren Sie Ruhe. Personenschutz geht vor Sachschutz.</p>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-8">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">Sofortmaßnahmen</h3>
+        <ol className="list-decimal list-inside space-y-3 text-slate-700">
+          <li><strong>Schaden mindern:</strong> Soweit möglich, weiteren Schaden abwenden (z.B. Flugzeug sichern).</li>
+          <li><strong>Meldung:</strong> Sofortige Meldung an den LUV-Vorstand.</li>
+          <li><strong>Keine Anerkenntnisse:</strong> Keine Schuldgeständnisse oder Zahlungen an Dritte ohne Rücksprache.</li>
+          <li><strong>Behörden:</strong> Bei Personenschäden oder schweren Sachschäden Polizei/BfU verständigen.</li>
+          <li><strong>Fotos:</strong> Machen Sie aussagekräftige Fotos vom Schaden und der Umgebung.</li>
+        </ol>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">Schadensmeldung ausfüllen</h3>
+        <p className="text-sm text-slate-600 mb-4">
+          Das Formular muss vollständig ausgefüllt an Johannes Kammerer (Zürich) gesendet werden. Folgende Daten bereithalten:
+        </p>
+        <ul className="space-y-2 text-sm text-slate-700 mb-6">
+          <li className="flex items-center"><CheckCircle className="text-green-500 mr-2 h-4 w-4" /> Halter & Pilot (inkl. Lizenzdaten)</li>
+          <li className="flex items-center"><CheckCircle className="text-green-500 mr-2 h-4 w-4" /> Flugzeugdaten (Kennzeichen, Typ, Werk-Nr.)</li>
+          <li className="flex items-center"><CheckCircle className="text-green-500 mr-2 h-4 w-4" /> Ort, Datum, Uhrzeit</li>
+          <li className="flex items-center"><CheckCircle className="text-green-500 mr-2 h-4 w-4" /> Schadenshergang (Skizze & Beschreibung)</li>
+          <li className="flex items-center"><CheckCircle className="text-green-500 mr-2 h-4 w-4" /> Zeugen & Beteiligte</li>
+        </ul>
+        <div className="bg-slate-100 p-4 rounded text-center">
+          <p className="font-semibold text-slate-800 mb-2">Adresse für Meldung:</p>
+          <p className="text-sm text-slate-600">Johannes Kammerer<br/>Müllerstrasse 43<br/>CH 8004 Zürich</p>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-sky-50 border border-sky-100 rounded-xl p-6">
+      <h3 className="font-bold text-sky-800 mb-2 flex items-center"><Download className="mr-2 h-5 w-5"/> Download Formulare</h3>
+      <p className="text-sm text-sky-700 mb-4">Bitte laden Sie die Schadensmeldung herunter, füllen Sie sie aus und senden Sie sie unterschrieben ab.</p>
+      <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition text-sm font-medium">
+        Schadensmeldung PDF herunterladen
+      </button>
+    </div>
+  </div>
+);
+
+const NewEntry = () => (
+  <div className="space-y-6">
+    <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+      <h2 className="text-2xl font-bold text-slate-800 mb-6">Neuabschluss / Verlängerung</h2>
+      <p className="text-slate-600 mb-6">
+        Für die Aufnahme eines Flugzeuges in die LUV Versicherung sind folgende Angaben im Anmeldeformular zwingend erforderlich.
+        Bitte beachten Sie, dass der Versicherungswert realistisch angegeben werden muss (LUV-Wert).
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 className="font-bold text-slate-700 mb-3">Erforderliche Flugzeugdaten</h3>
+          <ul className="space-y-2 text-sm text-slate-600">
+            <li className="p-2 bg-slate-50 rounded border-l-4 border-indigo-500">Kennzeichen & Wettbewerbskennzeichen</li>
+            <li className="p-2 bg-slate-50 rounded border-l-4 border-indigo-500">Flugzeugtyp, Werk-Nr., Baujahr</li>
+            <li className="p-2 bg-slate-50 rounded border-l-4 border-indigo-500">Kaufdatum & Kaufpreis</li>
+            <li className="p-2 bg-slate-50 rounded border-l-4 border-indigo-500">Flugstunden & Starts (bei Kauf)</li>
+            <li className="p-2 bg-slate-50 rounded border-l-4 border-indigo-500">
+              <strong>Flarm:</strong> Ist ein betriebsbereites Flarm vorhanden? (Ja/Nein)
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="font-bold text-slate-700 mb-3">Wichtige Hinweise zum Wert</h3>
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100 text-sm text-yellow-800">
+            <p className="mb-2 font-bold">Mit oder ohne Mehrwertsteuer?</p>
+            <p>
+              Wenn der Wert "ohne" MWST angegeben wird, erfolgt im Schadensfall die Regulierung ebenfalls ohne MWST. 
+              Dies ist relevant für vorsteuerabzugsberechtigte Vereine/Halter.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="bg-sky-50 border border-sky-100 rounded-xl p-6">
+      <h3 className="font-bold text-sky-800 mb-2 flex items-center"><Download className="mr-2 h-5 w-5"/> Download Formulare</h3>
+      <p className="text-sm text-sky-700 mb-4">Laden Sie das Anmeldeformular herunter, um ein neues Flugzeug anzumelden.</p>
+      <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-sky-700 transition text-sm font-medium">
+        Anmeldeformular PDF herunterladen
+      </button>
+    </div>
+  </div>
+);
